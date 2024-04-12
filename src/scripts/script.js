@@ -1,17 +1,40 @@
 let xp = 0;
 let health = 100;
-let gold = 50;
+let gold = 500;
 let currentWeapon = 0;
 let fighting;
 let mosterHealt;
 let inventory = ["stick"];
 
+if (!localStorage.getItem("gameData")) {
+  localStorage.setItem(
+    "gameData",
+    JSON.stringify({
+      xp: 0,
+      health: 100,
+      gold: 500,
+      currentWeapon: 0,
+      inventory: ["stick"],
+    })
+  );
+} else {
+  xp = JSON.parse(localStorage.getItem("gameData")).xp;
+  health = JSON.parse(localStorage.getItem("gameData")).health;
+  gold = JSON.parse(localStorage.getItem("gameData")).gold;
+  currentWeapon = JSON.parse(localStorage.getItem("gameData")).currentWeapon;
+  inventory = JSON.parse(localStorage.getItem("gameData")).inventory;
+}
+
 const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
 const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
+const buttonSave = document.querySelector("#buttonSave");
+const buttonLoad = document.querySelector("#buttonLoad");
+const buttonCloseModal = document.querySelector("#buttonCloseModal");
 const text = document.querySelector("#text");
 const text2 = document.querySelector("#text2");
+const text3 = document.querySelector("#text3");
 const xpText = document.querySelector("#xpText");
 const healthText = document.querySelector("#healthText");
 const goldText = document.querySelector("#goldText");
@@ -110,10 +133,47 @@ const locations2 = [
   },
 ];
 
+goldText.innerText = gold;
+xpText.innerText = xp;
+healthText.innerText = health;
 button1.onclick = goStore;
 button2.onclick = goCave;
 button3.onclick = fightDragon;
 button4.onclick = showInventory;
+buttonSave.onclick = () => handleSaves("save");
+buttonLoad.onclick = () => handleSaves("load");
+buttonCloseModal.onclick = () =>
+  document.querySelector("#modal").classList.add("hidden");
+
+function handleSaves(prop) {
+  if (prop === "save") {
+    localStorage.setItem(
+      "gameData",
+      JSON.stringify({
+        xp: xp,
+        health: health,
+        gold: gold,
+        currentWeapon: currentWeapon,
+        inventory: inventory,
+      })
+    );
+    text3.innerText = "Game saved successfully";
+    document.querySelector("#modal").classList.remove("hidden");
+  } else {
+    xp = JSON.parse(localStorage.getItem("gameData")).xp;
+    health = JSON.parse(localStorage.getItem("gameData")).health;
+    gold = JSON.parse(localStorage.getItem("gameData")).gold;
+    currentWeapon = JSON.parse(localStorage.getItem("gameData")).currentWeapon;
+    inventory = JSON.parse(localStorage.getItem("gameData")).inventory;
+
+    healthText.innerText = health;
+    xpText.innerText = xp;
+    goldText.innerText = gold;
+
+    document.querySelector("#modal").classList.remove("hidden");
+    text3.innerText = "Game loaded successfully";
+  }
+}
 
 function update(location) {
   [button1, button2, button3].map((i, index) => {
@@ -183,7 +243,7 @@ function buyWeapon() {
     return;
   }
 
-  if (currentWeapon === 3) {
+  if (currentWeapon === weapons?.length - 1) {
     text.innerText = "You already have best weapon in a game";
     return;
   }

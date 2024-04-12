@@ -6,7 +6,8 @@ body {
 }
 
 #text,
-#text2 {
+#text2,
+#text3 {
   background-color: black;
   color: white;
   padding: 10px;
@@ -43,4 +44,33 @@ body {
 
 .stat {
   padding-right: 10px;
+}
+
+.toRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 2.5px;
+}
+
+#modal {
+  position: fixed;
+  height: 91px;
+  width: 270px;
+  top: calc(50% - 45.5px);
+  left: calc(50% - 135px);
+}
+
+#backdrop {
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+.hidden {
+  display: none;
 }
