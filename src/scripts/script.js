@@ -1,29 +1,10 @@
 let xp = 0;
 let health = 100;
-let gold = 500;
+let gold = 50;
 let currentWeapon = 0;
 let fighting;
 let mosterHealt;
 let inventory = ["stick"];
-
-if (!localStorage.getItem("gameData")) {
-  localStorage.setItem(
-    "gameData",
-    JSON.stringify({
-      xp: 0,
-      health: 100,
-      gold: 500,
-      currentWeapon: 0,
-      inventory: ["stick"],
-    })
-  );
-} else {
-  xp = JSON.parse(localStorage.getItem("gameData")).xp;
-  health = JSON.parse(localStorage.getItem("gameData")).health;
-  gold = JSON.parse(localStorage.getItem("gameData")).gold;
-  currentWeapon = JSON.parse(localStorage.getItem("gameData")).currentWeapon;
-  inventory = JSON.parse(localStorage.getItem("gameData")).inventory;
-}
 
 const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
@@ -31,6 +12,7 @@ const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
 const buttonSave = document.querySelector("#buttonSave");
 const buttonLoad = document.querySelector("#buttonLoad");
+const buttonRestart = document.querySelector("#buttonRestart");
 const buttonCloseModal = document.querySelector("#buttonCloseModal");
 const text = document.querySelector("#text");
 const text2 = document.querySelector("#text2");
@@ -41,6 +23,28 @@ const goldText = document.querySelector("#goldText");
 const monsterStats = document.querySelector("#monsterStats");
 const monsterNameText = document.querySelector("#monsterName");
 const monsterHealthText = document.querySelector("#monsterHealth");
+
+if (!localStorage.getItem("gameData")) {
+  localStorage.setItem(
+    "gameData",
+    JSON.stringify({
+      xp: 0,
+      health: 100,
+      gold: 50,
+      currentWeapon: 0,
+      inventory: ["stick"],
+    })
+  );
+} else {
+  xp = JSON.parse(localStorage.getItem("gameData")).xp;
+  health = JSON.parse(localStorage.getItem("gameData")).health;
+  gold = JSON.parse(localStorage.getItem("gameData")).gold;
+  currentWeapon = JSON.parse(localStorage.getItem("gameData")).currentWeapon;
+  inventory = JSON.parse(localStorage.getItem("gameData")).inventory;
+  healthText.innerText = health;
+  xpText.innerText = xp;
+  goldText.innerText = gold;
+}
 
 const weapons = [
   {
@@ -127,9 +131,7 @@ const locations2 = [
     name: "inventory",
     "button text": ["Back"],
     "button functions": [exitInventory],
-    text: `Inventory:\n${inventory.map(
-      (i, index) => `${i}${index !== inventory?.length - 1 ? ", " : ""}`
-    )}`,
+    text: `Inventory:\n`,
   },
 ];
 
@@ -142,11 +144,19 @@ button3.onclick = fightDragon;
 button4.onclick = showInventory;
 buttonSave.onclick = () => handleSaves("save");
 buttonLoad.onclick = () => handleSaves("load");
+buttonRestart.onclick = () => handleSaves("restart");
 buttonCloseModal.onclick = () =>
   document.querySelector("#modal").classList.add("hidden");
 
 function handleSaves(prop) {
   if (prop === "save") {
+    if (button1.innerText !== "Go to store") {
+      text3.innerText = "Saves are available only in the town square";
+      document.querySelector("#modal").classList.remove("hidden");
+
+      return;
+    }
+
     localStorage.setItem(
       "gameData",
       JSON.stringify({
@@ -159,7 +169,14 @@ function handleSaves(prop) {
     );
     text3.innerText = "Game saved successfully";
     document.querySelector("#modal").classList.remove("hidden");
-  } else {
+  } else if (prop === "load") {
+    if (button1.innerText !== "Go to store") {
+      text3.innerText = "Loads are available only in the town square";
+      document.querySelector("#modal").classList.remove("hidden");
+
+      return;
+    }
+
     xp = JSON.parse(localStorage.getItem("gameData")).xp;
     health = JSON.parse(localStorage.getItem("gameData")).health;
     gold = JSON.parse(localStorage.getItem("gameData")).gold;
@@ -170,8 +187,28 @@ function handleSaves(prop) {
     xpText.innerText = xp;
     goldText.innerText = gold;
 
-    document.querySelector("#modal").classList.remove("hidden");
     text3.innerText = "Game loaded successfully";
+    document.querySelector("#modal").classList.remove("hidden");
+  } else {
+    localStorage.setItem(
+      "gameData",
+      JSON.stringify({
+        xp: 0,
+        health: 100,
+        gold: 50,
+        currentWeapon: 0,
+        inventory: ["stick"],
+      })
+    );
+
+    healthText.innerText = 100;
+    xpText.innerText = 0;
+    goldText.innerText = 50;
+
+    text3.innerText = "Game restarted successfully";
+    document.querySelector("#modal").classList.remove("hidden");
+
+    goTown();
   }
 }
 
@@ -195,6 +232,7 @@ function update2(location) {
 
 function showInventory() {
   update2(locations2.find((i) => i.name === "inventory"));
+  text2.innerText += `${inventory.map((i) => " " + i)}`;
 }
 
 function exitInventory() {
