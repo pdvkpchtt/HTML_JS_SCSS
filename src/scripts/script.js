@@ -129,8 +129,8 @@ const locations2 = [
   },
   {
     name: "inventory",
-    "button text": ["Back"],
-    "button functions": [exitInventory],
+    "button text": ["Sell trash"],
+    "button functions": [sellTrash],
     text: `Inventory:\n`,
   },
 ];
@@ -233,10 +233,26 @@ function update2(location) {
 function showInventory() {
   update2(locations2.find((i) => i.name === "inventory"));
   text2.innerText += `${inventory.map((i) => " " + i)}`;
+
+  document.querySelector("#buttonBack").classList.remove("hidden");
+  document.querySelector("#buttonBack").onclick = exitInventory;
 }
 
 function exitInventory() {
   update2(locations2.find((i) => i.name === "pannel"));
+  document.querySelector("#buttonBack").classList.add("hidden");
+}
+
+function sellTrash() {
+  if (inventory?.length === 1) {
+    text2.innerText = "You dont have any trash";
+    return;
+  }
+
+  gold = gold + 15 * (inventory?.length - 1);
+  inventory = inventory.filter((i) => i === weapons[currentWeapon].name);
+  goldText.innerText = gold;
+  text2.innerText = "Inventory:\n" + `${inventory.map((i) => " " + i)}`;
 }
 
 function goStore() {
@@ -291,4 +307,9 @@ function buyWeapon() {
   goldText.innerText = gold;
   text.innerText = `You now have a ${weapons[currentWeapon].name}`;
   inventory.push(weapons[currentWeapon].name);
+
+  if (button4.innerText === "Sell trash") {
+    update2(locations2.find((i) => i.name === "inventory"));
+    text2.innerText = "Inventory:\n" + `${inventory.map((i) => " " + i)}`;
+  }
 }
