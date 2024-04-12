@@ -9,13 +9,34 @@ let inventory = ["stick"];
 const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
 const button3 = document.querySelector("#button3");
+const button4 = document.querySelector("#button4");
 const text = document.querySelector("#text");
+const text2 = document.querySelector("#text2");
 const xpText = document.querySelector("#xpText");
 const healthText = document.querySelector("#healthText");
 const goldText = document.querySelector("#goldText");
 const monsterStats = document.querySelector("#monsterStats");
 const monsterNameText = document.querySelector("#monsterName");
 const monsterHealthText = document.querySelector("#monsterHealth");
+
+const weapons = [
+  {
+    name: "stick",
+    power: 5,
+  },
+  {
+    name: "dagger",
+    power: 30,
+  },
+  {
+    name: "claw hammer",
+    power: 50,
+  },
+  {
+    name: "sword",
+    power: 100,
+  },
+];
 
 const locations = [
   {
@@ -34,12 +55,12 @@ const locations = [
     "button functions": [buyHealth, buyWeapon, goTown],
     text: "You enter the store.",
   },
-  // {
-  // 	name: "cave",
-  // 	"button text": ["Fight slime", "Fight fanged beast", "Go to town square"],
-  // 	"button functions": [fightSlime, fightBeast, goTown],
-  // 	text: "You enter the cave. You see some monsters."
-  // },
+  {
+    name: "cave",
+    "button text": ["Fight slime", "Fight fanged beast", "Go to town square"],
+    "button functions": [fightSlime, fightBeast, goTown],
+    text: "You enter the cave. You see some monsters.",
+  },
   // {
   // 	name: "fight",
   // 	"button text": ["Attack", "Dodge", "Run"],
@@ -72,9 +93,27 @@ const locations = [
   // }
 ];
 
+const locations2 = [
+  {
+    name: "pannel",
+    "button text": ["Inventory"],
+    "button functions": [showInventory],
+    text: `Here you can manage your character.`,
+  },
+  {
+    name: "inventory",
+    "button text": ["Back"],
+    "button functions": [exitInventory],
+    text: `Inventory:\n${inventory.map(
+      (i, index) => `${i}${index !== inventory?.length - 1 ? ", " : ""}`
+    )}`,
+  },
+];
+
 button1.onclick = goStore;
 button2.onclick = goCave;
 button3.onclick = fightDragon;
+button4.onclick = showInventory;
 
 function update(location) {
   [button1, button2, button3].map((i, index) => {
@@ -83,6 +122,23 @@ function update(location) {
   });
 
   text.innerText = location.text;
+}
+
+function update2(location) {
+  [button4].map((i, index) => {
+    i.innerText = location["button text"][index];
+    i.onclick = location["button functions"][index];
+  });
+
+  text2.innerText = location.text;
+}
+
+function showInventory() {
+  update2(locations2.find((i) => i.name === "inventory"));
+}
+
+function exitInventory() {
+  update2(locations2.find((i) => i.name === "pannel"));
 }
 
 function goStore() {
@@ -101,10 +157,40 @@ function fightDragon() {
   console.log("fightDragon");
 }
 
+function fightSlime() {
+  console.log("fightSlime");
+}
+function fightBeast() {
+  console.log("fightBeast");
+}
+
 function buyHealth() {
-  console.log("buyHealth");
+  if (gold < 10) {
+    text.innerText = "You do not have enough gold to buy health";
+    return;
+  }
+
+  gold -= 10;
+  health += 10;
+  goldText.innerText = gold;
+  healthText.innerText = health;
+  text.innerText = "You've restored 10 HP";
 }
 
 function buyWeapon() {
-  console.log("buyWeapon");
+  if (gold < 30) {
+    text.innerText = "You do not have enough gold to buy weapon";
+    return;
+  }
+
+  if (currentWeapon === 3) {
+    text.innerText = "You already have best weapon in a game";
+    return;
+  }
+
+  gold -= 30;
+  currentWeapon += 1;
+  goldText.innerText = gold;
+  text.innerText = `You now have a ${weapons[currentWeapon].name}`;
+  inventory.push(weapons[currentWeapon].name);
 }

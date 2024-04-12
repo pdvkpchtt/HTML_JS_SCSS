@@ -1,8 +1,12 @@
 body {
   background-color: darkblue;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-#text {
+#text,
+#text2 {
   background-color: black;
   color: white;
   padding: 10px;
@@ -15,6 +19,7 @@ body {
   color: white;
   margin: 0 auto;
   padding: 10px;
+  width: 100%;
 }
 
 #controls {
